@@ -5,7 +5,7 @@ Sgp4 sat;
 unsigned long unixtime = 1458950400;
 int timezone = 12 ;  //utc + 12
 
-int  year; int mon; int day; int hr; int min; double sec;
+int  year; int mon; int day; int hr; int minute; double sec;
 
 
 
@@ -22,26 +22,26 @@ void Predict(int many){
         
         if ( error == 1){ //no error, prints overpass information
           
-          invjday(overpass.jdstart ,timezone ,true , year, mon, day, hr, min, sec);
+          invjday(overpass.jdstart ,timezone ,true , year, mon, day, hr, minute, sec);
           Serial.println("Overpass " + String(day) + ' ' + String(mon) + ' ' + String(year));
-          Serial.println("  Start: az=" + String(overpass.azstart) + "° " + String(hr) + ':' + String(min) + ':' + String(sec));
+          Serial.println("  Start: az=" + String(overpass.azstart) + "° " + String(hr) + ':' + String(minute) + ':' + String(sec));
           
-          invjday(overpass.jdmax ,timezone ,true , year, mon, day, hr, min, sec);
-          Serial.println("  Max: elev=" + String(overpass.maxelevation) + "° " + String(hr) + ':' + String(min) + ':' + String(sec));
+          invjday(overpass.jdmax ,timezone ,true , year, mon, day, hr, minute, sec);
+          Serial.println("  Max: elev=" + String(overpass.maxelevation) + "° " + String(hr) + ':' + String(minute) + ':' + String(sec));
           
-          invjday(overpass.jdstop ,timezone ,true , year, mon, day, hr, min, sec);
-          Serial.println("  Stop: az=" + String(overpass.azstop) + "° " + String(hr) + ':' + String(min) + ':' + String(sec));
+          invjday(overpass.jdstop ,timezone ,true , year, mon, day, hr, minute, sec);
+          Serial.println("  Stop: az=" + String(overpass.azstop) + "° " + String(hr) + ':' + String(minute) + ':' + String(sec));
           
           switch(overpass.transit){
               case none:
                   break;
               case enter:
-                  invjday(overpass.jdtransit ,timezone ,true , year, mon, day, hr, min, sec);
-                  Serial.println("  Enter earth shadow: " + String(hr) + ':' + String(min) + ':' + String(sec)); 
+                  invjday(overpass.jdtransit ,timezone ,true , year, mon, day, hr, minute, sec);
+                  Serial.println("  Enter earth shadow: " + String(hr) + ':' + String(minute) + ':' + String(sec)); 
                   break;
               case leave:
-                  invjday(overpass.jdtransit ,timezone ,true , year, mon, day, hr, min, sec);
-                  Serial.println("  Leave earth shadow: " + String(hr) + ':' + String(min) + ':' + String(sec)); 
+                  invjday(overpass.jdtransit ,timezone ,true , year, mon, day, hr, minute, sec);
+                  Serial.println("  Leave earth shadow: " + String(hr) + ':' + String(minute) + ':' + String(sec)); 
                   break;
           }
           switch(overpass.sight){
@@ -83,8 +83,8 @@ void setup() {
 
   //Display TLE epoch time
   double jdC = sat.satrec.jdsatepoch;
-  invjday(jdC , timezone, true, year, mon, day, hr, min, sec);
-  Serial.println("Epoch: " + String(day) + '/' + String(mon) + '/' + String(year) + ' ' + String(hr) + ':' + String(min) + ':' + String(sec));
+  invjday(jdC , timezone, true, year, mon, day, hr, minute, sec);
+  Serial.println("Epoch: " + String(day) + '/' + String(mon) + '/' + String(year) + ' ' + String(hr) + ':' + String(minute) + ':' + String(sec));
   Serial.println();
 
   Predict(50);   //Calculates the next 50 overpasses
