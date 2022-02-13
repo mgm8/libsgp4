@@ -90,8 +90,9 @@ class Sgp4 {
     void findsat(double jdI);     //find satellite position from julian date
     void findsat(unsigned long);  //find satellite position from unix time
 
-    bool nextpass( passinfo* passdata, int); // calculate next overpass data, returns true if succesfull
+    bool nextpass( passinfo* passdata, int itterations); // calculate next overpass data, returns true if succesfull
 	bool nextpass(passinfo* passdata, int itterations, bool direc); //direc = false for forward search, true for backwards search
+    bool nextpass(passinfo* passdata, int itterations, bool direc, double minimumElevation); //minimumElevation = minimum elevation above the horizon (in degrees)
     bool initpredpoint( double juliandate , double startelevation); //initialize prediction algorithm, starting from a juliandate and predict passes aboven startelevation
     bool initpredpoint( unsigned long unix, double startelevation); // from unix time
 

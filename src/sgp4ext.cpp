@@ -742,7 +742,8 @@ bool summertime(int year, int month, int day, int hour, int tzHours)
 {
 	if (month<3 || month>10) return false; // keine Sommerzeit in Jan, Feb, Nov, Dez
 	if (month>3 && month<10) return true; // Sommerzeit in Apr, Mai, Jun, Jul, Aug, Sep
-	if (month == 3 && (hour + 24 * day) >= (1 + tzHours + 24 * (31 - (5 * year / 4 + 4) % 7)) || month == 10 && (hour + 24 * day)<(1 + tzHours + 24 * (31 - (5 * year / 4 + 1) % 7)))
+	if (((month == 3) && ((hour + 24 * day) >= (1 + tzHours + 24 * (31 - (5 * year / 4 + 4) % 7))))
+      || ((month == 10) && ((hour + 24 * day) < (1 + tzHours + 24 * (31 - (5 * year / 4 + 1) % 7)))))
 		return true;
 	else
 		return false;

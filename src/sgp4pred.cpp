@@ -112,11 +112,19 @@ double Sgp4::sgp4wrap( double jdCe){
 
 // returns next overpass maximum, starting from a maximum called startpoint
 bool Sgp4::nextpass(passinfo* passdata, int itterations) {
-	Sgp4::nextpass( passdata, itterations, false);
+	return (Sgp4::nextpass( passdata, itterations, false, 0.0));
+}
+
+// returns next overpass. Set direc to false for forward search, true for backwards search
+bool Sgp4::nextpass(passinfo* passdata, int itterations, bool direc) {
+	return (Sgp4::nextpass( passdata, itterations, direc, 0.0));
 }
 
 // returns next overpass maximum, starting from a maximum called startpoint
-bool Sgp4::nextpass( passinfo* passdata, int itterations, bool direc){
+// direc = false for forward search, true for backwards search
+// minimumElevation is the minimum elevation above the horizon in degrees. Passes which are lower than this are rejected
+// returns false if all itterations are below the minimumElevation
+bool Sgp4::nextpass( passinfo* passdata, int itterations, bool direc, double minimumElevation){
 
     double range,jump;
     int i;
@@ -134,7 +142,7 @@ bool Sgp4::nextpass( passinfo* passdata, int itterations, bool direc){
 		jump = 1.0 / revpday;
 	}
 
-    for (i = 0; i < itterations && max_elevation <= 0.0; i++){ //search for elevation aboven zero
+    for (i = 0; i < itterations && max_elevation <= (minimumElevation * pi / 180); i++){ //search for elevation above minimumElevation
        jdCp+= jump;
        max_elevation = - brentmin(jdCp - range , jdCp, jdCp + range, &Sgp4::sgp4wrap , tol, &jdCp, this);
 		#ifdef ESP8266
