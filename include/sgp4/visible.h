@@ -56,6 +56,13 @@
 /**
  * \brief Calculates the sun coordinates.
  *
+ * This function calculates the geocentric equatorial position vector
+ * the sun given the julian date. This is the low precision formula and
+ * is valid for years from 1950 to 2050. Accuaracy of apparent coordinates
+ * is 0.01 degrees. Notice many of the calculations are performed in
+ * degrees, and are not changed until later. This is due to the fact that
+ * the almanac uses degrees exclusively in their formulations.
+ *
  * \param[in] jd .
  *
  * \param[in] rsun .
