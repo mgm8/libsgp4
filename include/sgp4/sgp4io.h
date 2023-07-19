@@ -70,7 +70,7 @@
  *
  * \return None.
  */
-void twoline2rv(char longstr1[130], char longstr2[130], char opsmode, gravconsttype  whichconst, elsetrec& satrec);
+void twoline2rv(char longstr1[130], char longstr2[130], char opsmode, gravconsttype  whichconst, elsetrec *satrec);
 
 /**
  * \brief .
@@ -79,7 +79,7 @@ void twoline2rv(char longstr1[130], char longstr2[130], char opsmode, gravconstt
  *
  * \return .
  */
-bool twolineChecksum(const char longstr[]);
+bool twoline_checksum(const char longstr[]);
 
 #endif /* SGP4IO_H_ */
 

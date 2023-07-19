@@ -103,53 +103,183 @@ typedef struct
     shadowtransit transit;
 } passinfo;
 
-class Sgp4
+/**
+ * \brief .
+ */
+typedef struct
 {
     char opsmode;
-    gravconsttype  whichconst;
+    gravconsttype whichconst;
     double ro[3];
     double vo[3];
     double razel[3];
-    double offset; //Min elevation for overpass prediction in radials
-    double sunoffset;  //Min elevation sun for daylight in radials
-    double jdC;    //Current used julian date
-    double jdCp;    //Current used julian date for prediction
+    double offset;      /* Min elevation for overpass prediction in radials */
+    double sunoffset;   /* Min elevation sun for daylight in radials */
+    double jdC;         /* Current used julian date */
+    double jdCp;        /* Current used julian date for prediction */
 
-    double sgp4wrap( double jdCe);  //returns the elevation for a given julian date
-	double visiblewrap(double jdCe);  //returns angle between sun surface and earth surface
+    double sgp4wrap( double jdCe);      /* returns the elevation for a given julian date */
+    double visiblewrap(double jdCe);    /* returns angle between sun surface and earth surface */
 
-  public:
-    char satName[25];   ///satellite name
-	char line1[80];     //tle line 1
-	char line2[80];     //tle line 2
+    char satName[25];   /* satellite name */
+    char line1[80];     /* tle line 1 */
+    char line2[80];     /* tle line 2 */
 
-    double revpday;  ///revolutions per day
+    double revpday;     /* revolutions per day */
     elsetrec satrec;
     double siteLat, siteLon, siteAlt, siteLatRad, siteLonRad;
     double satLat, satLon, satAlt, satAz, satEl, satDist,satJd;
     double sunAz, sunEl;
-	int16_t satVis;
+    int16_t satVis;
+} sgp4_t;
 
-    Sgp4();
-    bool init(const char naam[], char longstr1[130], char longstr2[130]);  //initialize parameters from 2 line elements
-    void site(double lat, double lon, double alt);  //initialize site latitude[degrees],longitude[degrees],altitude[meters]
-    void setsunrise(double degrees);   //change the elevation that the sun needs to make it daylight
+/**
+ * \brief Initialize parameters from 2 line elements.
+ *
+ * \param[in] naam .
+ *
+ * \param[in] longstr1 .
+ *
+ * \param[in] longstr2 .
+ *
+ * \
+ */
+bool sgp4_init(sgp4_t *conf, const char naam[], char longstr1[130], char longstr2[130]);
 
-    void findsat(double jdI);     //find satellite position from julian date
-    void findsat(unsigned long);  //find satellite position from unix time
+/**
+ * \brief Initialize site latitude[degrees],longitude[degrees],altitude[meters].
+ *
+ * \param[in] lat .
+ *
+ * \param[in] lon .
+ *
+ * \param[in] alt .
+ *
+ * \return None.
+ */
+void sgp4_site(sgp4_t *conf, double lat, double lon, double alt);
 
-    bool nextpass( passinfo* passdata, int itterations); // calculate next overpass data, returns true if succesfull
-	bool nextpass(passinfo* passdata, int itterations, bool direc); //direc = false for forward search, true for backwards search
-    bool nextpass(passinfo* passdata, int itterations, bool direc, double minimumElevation); //minimumElevation = minimum elevation above the horizon (in degrees)
-    bool initpredpoint( double juliandate , double startelevation); //initialize prediction algorithm, starting from a juliandate and predict passes aboven startelevation
-    bool initpredpoint( unsigned long unix, double startelevation); // from unix time
+/**
+ * \brief Change the elevation that the sun needs to make it daylight.
+ *
+ * \param[in] degrees .
+ *
+ * \return None.
+ */
+void sgp4_setsunrise(sgp4_t *conf, double degrees);
 
-    int16_t visible();  //check if satellite is visible
-	int16_t visible(bool& notdark, double& deltaphi);
+/**
+ * \brief Find satellite position from julian date.
+ *
+ * \param[in] jdI .
+ *
+ * \return None.
+ */
+void sgp4_findsat(sgp4_t *conf, double jdI);
 
-	double getpredpoint();
-	void setpredpoint(double jdCe);
-};
+/**
+ * \brief Find satellite position from unix time.
+ *
+ * \param[in] .
+ *
+ * \return None.
+ */
+void sgp4_findsat(sgp4_t *conf, unsigned long);
+
+/**
+ * \brief Calculate next overpass data, returns true if succesfull.
+ *
+ * \param[in,out] passdata .
+ *
+ * \param[in] itterations .
+ *
+ * \reutrn .
+ */
+bool sgp4_nextpass(sgp4_t *conf, passinfo *passdata, int itterations);
+
+/**
+ * \brief Direc = false for forward search, true for backwards search.
+ *
+ * \param[in,out] passdata .
+ *
+ * \param[in] itterations .
+ *
+ * \param[in] direc .
+ *
+ * \return .
+ */
+bool sgp4_nextpass(sgp4_t *conf, passinfo *passdata, int itterations, bool direc);
+
+/**
+ * \brief MinimumElevation = minimum elevation above the horizon (in degrees).
+ *
+ * \param[in,out] passdata .
+ *
+ * \param[in] itterations .
+ *
+ * \param[in] direc .
+ *
+ * \param[in] minimumElevation .
+ *
+ * \return .
+ */
+bool sgp4_nextpass(sgp4_t *conf, passinfo *passdata, int itterations, bool direc, double minimumElevation);
+
+/**
+ * \brief Initialize prediction algorithm, starting from a juliandate and predict passes aboven startelevation.
+ *
+ * \param[in] juliandata .
+ *
+ * \param[in] startelevation .
+ *
+ * \return .
+ */
+bool sgp4_initpredpoint(sgp4_t *conf, double juliandate, double startelevation);
+
+/**
+ * \brief From unix time.
+ *
+ * \param[in] unix .
+ *
+ * \param[in] startelevation .
+ *
+ * \return .
+ */
+bool sgp4_initpredpoint(sgp4_t *conf, unsigned long unix, double startelevation);
+
+/**
+ * \brief Check if satellite is visible.
+ *
+ * \return .
+ */
+int16_t sgp4_visible(sgp4_t *conf);
+
+/**
+ * \brief .
+ *
+ * \param[in,out] notdark .
+ *
+ * \param[in,out] deltaphi .
+ *
+ * \return .
+ */
+int16_t sgp4_visible(sgp4_t *conf, bool *notdark, double *deltaphi);
+
+/**
+ * \brief .
+ *
+ * \return .
+ */
+double sgp4_getpredpoint(sgp4_t *conf);
+
+/**
+ * \brief .
+ *
+ * \param[in] jdCe .
+ *
+ * \return None.
+ */
+void sgp4_setpredpoint(sgp4_t *conf, double jdCe);
 
 #endif /* SGP4PRED_H_ */
 

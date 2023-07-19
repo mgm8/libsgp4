@@ -51,6 +51,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define SGP4Version  "SGP4 Version 2011-12-30"
 
@@ -128,7 +129,7 @@ typedef struct elsetrec
  *
  * \return .
  */
-bool sgp4init(gravconsttype whichconst, char opsmode, const int satn, const double epoch, const double xbstar, const double xecco, const double xargpo, const double xinclo, const double xmo, const double xno, const double xnodeo, elsetrec& satrec);
+bool sgp4init(gravconsttype whichconst, char opsmode, const int satn, const double epoch, const double xbstar, const double xecco, const double xargpo, const double xinclo, const double xmo, const double xno, const double xnodeo, elsetrec *satrec);
 
 /**
  * \brief .
@@ -145,7 +146,7 @@ bool sgp4init(gravconsttype whichconst, char opsmode, const int satn, const doub
  *
  * \return .
  */
-bool sgp4(gravconsttype whichconst, elsetrec& satrec, double tsince, double r[3], double v[3]);
+bool sgp4(gravconsttype whichconst, elsetrec *satrec, double tsince, double r[3], double v[3]);
 
 /**
  * \brief .
@@ -179,7 +180,7 @@ double gstime(double jdut1);
  *
  * \return None.
  */
-void getgravconst(gravconsttype whichconst, double& tumin, double& mu, double& radiusearthkm, double& xke, double& j2, double& j3, double& j4, double& j3oj2);
+void getgravconst(gravconsttype whichconst, double *tumin, double *mu, double *radiusearthkm, double *xke, double *j2, double *j3, double *j4, double *j3oj2);
 
 #endif /* SGP4UNIT_H_ */
 

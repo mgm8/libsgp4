@@ -39,8 +39,9 @@
  */
 
 #include <math.h>
-#include "brent.h"
-#include "sgp4pred.h"
+
+#include <sgp4/brent.h>
+#include <sgp4/sgp4pred.h>
 
 #define ITMAX   100         /* Here ITMAX is the maximum allowed number of iterations; */
 #define R       0.61803399

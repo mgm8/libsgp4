@@ -1,3 +1,43 @@
+/*
+ * Released under MIT License
+ *
+ * Copyright (c) 2021 Hopperpop.
+ *
+ * Copyright The libsgp4 Contributors.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+/**
+ * \brief implementation.
+ * 
+ * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * 
+ * \version 1.0.3
+ * 
+ * \date 2023/07/18
+ * 
+ * \addtogroup sgp4ext
+ * \{
+ */
+
 /*     ----------------------------------------------------------------
 *
 *                               sgp4ext.cpp
@@ -23,24 +63,19 @@
 *                           original baseline
 *       ----------------------------------------------------------------      */
 
-#include "sgp4ext.h"
+#include <sgp4/sgp4ext.h>
 
-
-double  sgn
-        (
-          double x
-        )
-   {
-     if (x < 0.0)
-       {
-          return -1.0;
-       }
-       else
-       {
-          return 1.0;
-       }
-
-   }  // end sgn
+double sgn(double x)
+{
+    if (x < 0.0)
+    {
+        return -1.0;
+    }
+    else
+    {
+        return 1.0;
+    }
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -64,13 +99,10 @@ double  sgn
 *    none.
 * --------------------------------------------------------------------------- */
 
-double  mag
-        (
-          double x[3]
-        )
-   {
-     return sqrt(x[0]*x[0] + x[1]*x[1] + x[2]*x[2]);
-   }  // end mag
+double mag(double x[3])
+{
+    return sqrt(x[0]*x[0] + x[1]*x[1] + x[2]*x[2]);
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -94,16 +126,12 @@ double  mag
 *    mag           magnitude of a vector
  ---------------------------------------------------------------------------- */
 
-void    cross
-        (
-          double vec1[3], double vec2[3], double outvec[3]
-        )
-   {
-     outvec[0]= vec1[1]*vec2[2] - vec1[2]*vec2[1];
-     outvec[1]= vec1[2]*vec2[0] - vec1[0]*vec2[2];
-     outvec[2]= vec1[0]*vec2[1] - vec1[1]*vec2[0];
-   }  // end cross
-
+void cross(double vec1[3], double vec2[3], double outvec[3])
+{
+    outvec[0] = vec1[1] * vec2[2] - vec1[2] * vec2[1];
+    outvec[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
+    outvec[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -128,13 +156,10 @@ void    cross
 *
 * --------------------------------------------------------------------------- */
 
-double  dot
-        (
-          double x[3], double y[3]
-        )
-   {
-     return (x[0]*y[0] + x[1]*y[1] + x[2]*y[2]);
-   }  // end dot
+double dot(double x[3], double y[3])
+{
+    return (x[0] * y[0] + x[1] * y[1] + x[2] * y[2]);
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -160,30 +185,30 @@ double  dot
 *    dot           dot product of two vectors
 * --------------------------------------------------------------------------- */
 
-double  angle
-        (
-          double vec1[3],
-          double vec2[3]
-        )
-   {
-     double small, undefined, magv1, magv2, temp;
-     small     = 0.00000001;
-     undefined = 999999.1;
+double angle(double vec1[3], double vec2[3])
+{
+    double small, undefined, magv1, magv2, temp;
+    small     = 0.00000001;
+    undefined = 999999.1;
 
-     magv1 = mag(vec1);
-     magv2 = mag(vec2);
+    magv1 = mag(vec1);
+    magv2 = mag(vec2);
 
-     if (magv1*magv2 > small*small)
-       {
-         temp= dot(vec1,vec2) / (magv1*magv2);
-         if (fabs( temp ) > 1.0)
-             temp= sgn(temp) * 1.0;
-         return acos( temp );
-       }
-       else
-         return undefined;
-   }  // end angle
+    if (magv1 * magv2 > small * small)
+    {
+        temp= dot(vec1, vec2) / (magv1 * magv2);
+        if (fabs(temp) > 1.0)
+        {
+            temp= sgn(temp) * 1.0;
+        }
 
+        return acos(temp);
+    }
+    else
+    {
+        return undefined;
+    }
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -207,14 +232,10 @@ double  angle
 *
 * --------------------------------------------------------------------------- */
 
-double  asinh
-        (
-          double xval
-        )
-   {
-     return log( xval + sqrt( xval*xval + 1.0 ) );
-   }  // end asinh
-
+double asinh(double xval)
+{
+    return log(xval + sqrt(xval * xval + 1.0));
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -251,62 +272,63 @@ double  asinh
 *    vallado       2007, 85, alg 5
 * --------------------------------------------------------------------------- */
 
-void newtonnu
-     (
-       double ecc, double nu,
-       double& e0, double& m
-     )
-     {
-       double small, sine, cose;
+void newtonnu(double ecc, double nu, double *e0, double *m)
+{
+    double small, sine, cose;
 
-     // ---------------------  implementation   ---------------------
-     e0= 999999.9;
-     m = 999999.9;
-     small = 0.00000001;
+    /* Implementation */
+    *e0= 999999.9;
+    *m = 999999.9;
+    small = 0.00000001;
 
-     // --------------------------- circular ------------------------
-     if ( fabs( ecc ) < small  )
-       {
-         m = nu;
-         e0= nu;
-       }
-       else
-         // ---------------------- elliptical -----------------------
-         if ( ecc < 1.0-small  )
-           {
-             sine= ( sqrt( 1.0 -ecc*ecc ) * sin(nu) ) / ( 1.0 +ecc*cos(nu) );
-             cose= ( ecc + cos(nu) ) / ( 1.0  + ecc*cos(nu) );
-             e0  = atan2( sine,cose );
-             m   = e0 - ecc*sin(e0);
-           }
-           else
-             // -------------------- hyperbolic  --------------------
-             if ( ecc > 1.0 + small  )
-               {
-                 if ((ecc > 1.0 ) && (fabs(nu)+0.00001 < pi-acos(1.0 /ecc)))
-                   {
-                     sine= ( sqrt( ecc*ecc-1.0  ) * sin(nu) ) / ( 1.0  + ecc*cos(nu) );
-                     e0  = asinh( sine );
-                     m   = ecc*sinh(e0) - e0;
-                   }
-                }
-               else
-                 // ----------------- parabolic ---------------------
-                 if ( fabs(nu) < 168.0*pi/180.0  )
-                   {
-                     e0= tan( nu*0.5  );
-                     m = e0 + (e0*e0*e0)/3.0;
-                   }
+    /* Circular */
+    if (fabs(ecc) < small)
+    {
+        *m = nu;
+        *e0= nu;
+    }
+    else
+    /* Elliptical */
+    if (ecc < 1.0 - small)
+    {
+        sine = (sqrt(1.0 -ecc * ecc) * sin(nu)) / (1.0 + ecc * cos(nu));
+        cose = (ecc + cos(nu)) / (1.0  + ecc * cos(nu));
+        *e0  = atan2(sine, cose);
+        *m   = *e0 - ecc * sin(*e0);
+    }
+    else
+    {
+        /* Hyperbolic */
+        if (ecc > 1.0 + small)
+        {
+            if ((ecc > 1.0) && (fabs(nu) + 0.00001 < pi-acos(1.0/ecc)))
+            {
+                sine = (sqrt(ecc * ecc - 1.0) * sin(nu)) / (1.0 + ecc * cos(nu));
+                *e0  = asinh(sine);
+                *m   = ecc*sinh(*e0) - *e0;
+            }
+        }
+        else
+        {
+            /* Parabolic */
+            if (fabs(nu) < 168.0*pi/180.0)
+            {
+                *e0 = tan(nu * 0.5);
+                *m  = *e0 + (*e0 * *e0 * *e0) / 3.0;
+            }
+        }
+    }
 
-     if ( ecc < 1.0  )
-       {
-         m = floatmod( m,2.0 *pi );
-         if ( m < 0.0  )
-             m = m + 2.0 *pi;
-         e0 = floatmod( e0,2.0 *pi );
-       }
-   }  // end newtonnu
-
+    if (ecc < 1.0)
+    {
+        *m = floatmod(m, 2.0 * pi);
+        if (m < 0.0)
+        {
+            m = m + 2.0 * pi;
+        }
+        *e0 = floatmod(*e0, 2.0 * pi);
+    }
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -365,169 +387,214 @@ void newtonnu
 *    vallado       2007, 126, alg 9, ex 2-5
 * --------------------------------------------------------------------------- */
 
-void rv2coe
-     (
-       double r[3], double v[3], double mu,
-       double& p, double& a, double& ecc, double& incl, double& omega, double& argp,
-       double& nu, double& m, double& arglat, double& truelon, double& lonper
-     )
-     {
-       double undefined, small, hbar[3], nbar[3], magr, magv, magn, ebar[3], sme,
-              rdotv, infinite, temp, c1, hk, twopi, magh, halfpi, e;
+void rv2coe(double r[3], double v[3], double mu,
+            double& p, double& a, double& ecc, double& incl, double& omega, double& argp,
+            double& nu, double& m, double& arglat, double& truelon, double& lonper)
+{
+    double undefined, small, hbar[3], nbar[3], magr, magv, magn, ebar[3], sme,
+           rdotv, infinite, temp, c1, hk, twopi, magh, halfpi, e;
 
-       int i;
-       char typeorbit[3];
+    int i;
+    char typeorbit[3];
 
-     twopi  = 2.0 * pi;
-     halfpi = 0.5 * pi;
-     small  = 0.00000001;
-     undefined = 999999.1;
-     infinite  = 999999.9;
+    twopi  = 2.0 * pi;
+    halfpi = 0.5 * pi;
+    small  = 0.00000001;
+    undefined = 999999.1;
+    infinite  = 999999.9;
 
-     // -------------------------  implementation   -----------------
-     magr = mag( r );
-     magv = mag( v );
+    /* Implementation */
+    magr = mag(r);
+    magv = mag(v);
 
-     // ------------------  find h n and e vectors   ----------------
-     cross( r,v, hbar );
-     magh = mag( hbar );
-     if ( magh > small )
-       {
-         nbar[0]= -hbar[1];
-         nbar[1]=  hbar[0];
-         nbar[2]=   0.0;
-         magn = mag( nbar );
-         c1 = magv*magv - mu /magr;
-         rdotv = dot( r,v );
-         for (i= 0; i <= 2; i++)
-             ebar[i]= (c1*r[i] - rdotv*v[i])/mu;
-         ecc = mag( ebar );
+    /* Find h n and e vectors */
+    cross(r, v, hbar);
+    magh = mag(hbar);
+    if (magh > small)
+    {
+        nbar[0]= -hbar[1];
+        nbar[1]=  hbar[0];
+        nbar[2]=  0.0;
+        magn = mag(nbar);
+        c1 = magv * magv - mu / magr;
+        rdotv = dot(r, v);
+        for(i= 0; i <= 2; i++)
+        {
+            ebar[i]= (c1*r[i] - rdotv*v[i])/mu;
+        }
+        ecc = mag(ebar);
 
-         // ------------  find a e and semi-latus rectum   ----------
-         sme= ( magv*magv*0.5  ) - ( mu /magr );
-         if ( fabs( sme ) > small )
-             a= -mu  / (2.0 *sme);
-           else
-             a= infinite;
-         p = magh*magh/mu;
+        /* Find a e and semi-latus rectum */
+        sme = (magv * magv * 0.5) - (mu / magr);
+        if (fabs(sme) > small)
+        {
+            a = -mu / (2.0 * sme);
+        }
+        else
+        {
+            a = infinite;
+        }
+        p = magh * magh / mu;
 
-         // -----------------  find inclination   -------------------
-         hk= hbar[2]/magh;
-         incl= acos( hk );
+        /* Find inclination */
+        hk = hbar[2] / magh;
+        incl = acos(hk);
 
-         // --------  determine type of orbit for later use  --------
-         // ------ elliptical, parabolic, hyperbolic inclined -------
-         strcpy(typeorbit,"ei");
-         if ( ecc < small )
-           {
-             // ----------------  circular equatorial ---------------
-             if  ((incl<small) | (fabs(incl-pi)<small))
-                 strcpy(typeorbit,"ce");
-               else
-                 // --------------  circular inclined ---------------
-                 strcpy(typeorbit,"ci");
-           }
-           else
-           {
-             // - elliptical, parabolic, hyperbolic equatorial --
-             if  ((incl<small) | (fabs(incl-pi)<small))
-                 strcpy(typeorbit,"ee");
-           }
+        /* Determine type of orbit for later use */
+        /* Elliptical, parabolic, hyperbolic inclined */
+        strcpy(typeorbit, "ei");
+        if (ecc < small)
+        {
+            /* Circular equatorial */
+            if ((incl < small) | (fabs(incl - pi) < small))
+            {
+                strcpy(typeorbit, "ce");
+            }
+            else
+            {
+                /* Circular inclined */
+                strcpy(typeorbit,"ci");
+            }
+        }
+        else
+        {
+            /* Elliptical, parabolic, hyperbolic equatorial */
+            if  ((incl < small) | (fabs(incl - pi) < small))
+            {
+                strcpy(typeorbit, "ee");
+            }
+        }
 
-         // ----------  find longitude of ascending node ------------
-         if ( magn > small )
-           {
-             temp= nbar[0] / magn;
-             if ( fabs(temp) > 1.0  )
-                 temp= sgn(temp);
-             omega= acos( temp );
-             if ( nbar[1] < 0.0  )
-                 omega= twopi - omega;
-           }
-           else
-             omega= undefined;
+        /* Find longitude of ascending node */
+        if (magn > small)
+        {
+            temp = nbar[0] / magn;
+            if (fabs(temp) > 1.0)
+            {
+                temp = sgn(temp);
+            }
+            omega= acos(temp);
+            if (nbar[1] < 0.0)
+            {
+                omega= twopi - omega;
+            }
+        }
+        else
+        {
+            omega = undefined;
+        }
 
-         // ---------------- find argument of perigee ---------------
-         if ( strcmp(typeorbit,"ei") == 0 )
-           {
-             argp = angle( nbar,ebar);
-             if ( ebar[2] < 0.0  )
-                 argp= twopi - argp;
-           }
-           else
-             argp= undefined;
+        /* Find argument of perigee */
+        if (strcmp(typeorbit, "ei") == 0)
+        {
+            argp = angle(nbar, ebar);
+            if (ebar[2] < 0.0)
+            {
+                argp = twopi - argp;
+            }
+        }
+        else
+        {
+            argp = undefined;
+        }
 
-         // ------------  find true anomaly at epoch    -------------
-         if ( typeorbit[0] == 'e' )
-           {
-             nu =  angle( ebar,r);
-             if ( rdotv < 0.0  )
-                 nu= twopi - nu;
-           }
-           else
-             nu= undefined;
+        /* Find true anomaly at epoch */
+        if (typeorbit[0] == 'e')
+        {
+            nu = angle(ebar, r);
+            if (rdotv < 0.0)
+            {
+                nu = twopi - nu;
+            }
+        }
+        else
+        {
+            nu = undefined;
+        }
 
-         // ----  find argument of latitude - circular inclined -----
-         if ( strcmp(typeorbit,"ci") == 0 )
-           {
-             arglat = angle( nbar,r );
-             if ( r[2] < 0.0  )
-                 arglat= twopi - arglat;
-             m = arglat;
-           }
-           else
-             arglat= undefined;
+        /* Find argument of latitude - circular inclined */
+        if (strcmp(typeorbit, "ci") == 0)
+        {
+            arglat = angle(nbar, r);
+            if (r[2] < 0.0)
+            {
+                arglat = twopi - arglat;
+            }
+            m = arglat;
+        }
+        else
+        {
+            arglat = undefined;
+        }
 
-         // -- find longitude of perigee - elliptical equatorial ----
-         if  (( ecc>small ) && (strcmp(typeorbit,"ee") == 0))
-           {
-             temp= ebar[0]/ecc;
-             if ( fabs(temp) > 1.0  )
-                 temp= sgn(temp);
-             lonper= acos( temp );
-             if ( ebar[1] < 0.0  )
-                 lonper= twopi - lonper;
-             if ( incl > halfpi )
-                 lonper= twopi - lonper;
-           }
-           else
-             lonper= undefined;
+        /* Find longitude of perigee - elliptical equatorial */
+        if ((ecc > small ) && (strcmp(typeorbit, "ee") == 0))
+        {
+            temp = ebar[0] / ecc;
+            if (fabs(temp) > 1.0)
+            {
+                temp= sgn(temp);
+            }
+            lonper = acos(temp);
+            if (ebar[1] < 0.0)
+            {
+                lonper = twopi - lonper;
+            }
+            if (incl > halfpi)
+            {
+                lonper = twopi - lonper;
+            }
+        }
+        else
+        {
+            lonper = undefined;
+        }
 
-         // -------- find true longitude - circular equatorial ------
-         if  (( magr>small ) && ( strcmp(typeorbit,"ce") == 0 ))
-           {
-             temp= r[0]/magr;
-             if ( fabs(temp) > 1.0  )
-                 temp= sgn(temp);
-             truelon= acos( temp );
-             if ( r[1] < 0.0  )
-                 truelon= twopi - truelon;
-             if ( incl > halfpi )
-                 truelon= twopi - truelon;
-             m = truelon;
-           }
-           else
-             truelon= undefined;
+        /* Find true longitude - circular equatorial */
+        if ((magr > small) && (strcmp(typeorbit, "ce") == 0))
+        {
+            temp = r[0] / magr;
+            if (fabs(temp) > 1.0)
+            {
+                temp= sgn(temp);
+            }
+            truelon= acos(temp);
+            if (r[1] < 0.0)
+            {
+                truelon = twopi - truelon;
+            }
+            if (incl > halfpi)
+            {
+                truelon = twopi - truelon;
+            }
+            m = truelon;
+        }
+        else
+        {
+            truelon = undefined;
+        }
 
-         // ------------ find mean anomaly for all orbits -----------
-         if ( typeorbit[0] == 'e' )
-             newtonnu(ecc,nu,  e, m);
-     }
-      else
-     {
-        p    = undefined;
-        a    = undefined;
-        ecc  = undefined;
-        incl = undefined;
-        omega= undefined;
-        argp = undefined;
-        nu   = undefined;
-        m    = undefined;
-        arglat = undefined;
-        truelon= undefined;
-        lonper = undefined;
-     }
-   }  // end rv2coe
+        /* Find mean anomaly for all orbits */
+        if (typeorbit[0] == 'e')
+        {
+            newtonnu(ecc, nu, &e, m);
+        }
+    }
+    else
+    {
+        p       = undefined;
+        a       = undefined;
+        ecc     = undefined;
+        incl    = undefined;
+        omega   = undefined;
+        argp    = undefined;
+        nu      = undefined;
+        m       = undefined;
+        arglat  = undefined;
+        truelon = undefined;
+        lonper  = undefined;
+    }
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -565,20 +632,15 @@ void rv2coe
 *
 * --------------------------------------------------------------------------- */
 
-void    jday
-        (
-          int year, int mon, int day, int hr, int minute, double sec,
-		  int timezone, bool daylightsaving, double& jd
-        )
-   {
-     jd = 367.0 * year -
-          floor((7 * (year + floor((mon + 9) / 12.0))) * 0.25) +
-          floor( 275 * mon / 9.0 ) +
-          day + 1721013.5 +
-          ((sec / 60.0 + minute) / 60.0 + hr - timezone - (daylightsaving && summertime(year,mon,day,hr,timezone))) / 24.0;  // ut in days
-          // - 0.5*sgn(100.0*year + mon - 190002.5) + 0.5;
-   }  // end jday
-
+void jday(int year, int mon, int day, int hr, int minute, double sec, int timezone, bool daylightsaving, double *jd)
+{
+    *jd = 367.0 * year -
+         floor((7 * (year + floor((mon + 9) / 12.0))) * 0.25) +
+         floor( 275 * mon / 9.0 ) +
+         day + 1721013.5 +
+         ((sec / 60.0 + minute) / 60.0 + hr - timezone - (daylightsaving && summertime(year, mon, day, hr, timezone))) / 24.0;  /* ut in days */
+    /* - 0.5*sgn(100.0*year + mon - 190002.5) + 0.5; */
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -617,38 +679,36 @@ void    jday
 *    none.
 * --------------------------------------------------------------------------- */
 
-void    days2mdhms
-        (
-          int year, double days,
-          int& mon, int& day, int& hr, int& minute, double& sec
-        )
-   {
-     int i, inttemp, dayofyr;
-     double    temp;
-     int lmonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+void days2mdhms(int year, double days, int *mon, int *day, int *hr, int *minute, double *sec)
+{
+    int i, inttemp, dayofyr;
+    double temp;
+    int lmonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-     dayofyr = (int)floor(days);
-     /* ----------------- find month and day of month ---------------- */
-     if ( (year % 4) == 0 )
-       lmonth[1] = 29;
+    dayofyr = (int)floor(days);
+    /* Find month and day of month */
+    if ((year % 4) == 0)
+    {
+        lmonth[1] = 29;
+    }
 
-     i = 1;
-     inttemp = 0;
-     while ((dayofyr > inttemp + lmonth[i-1]) && (i < 12))
-     {
-       inttemp = inttemp + lmonth[i-1];
-       i++;
-     }
-     mon = i;
-     day = dayofyr - inttemp;
+    i = 1;
+    inttemp = 0;
+    while((dayofyr > inttemp + lmonth[i - 1]) && (i < 12))
+    {
+        inttemp = inttemp + lmonth[i - 1];
+        i++;
+    }
+    *mon = i;
+    *day = dayofyr - inttemp;
 
-     /* ----------------- find hours minutes and seconds ------------- */
-     temp = (days - dayofyr) * 24.0;
-     hr   = (int)floor(temp);
-     temp = (temp - hr) * 60.0;
-     minute  = (int)floor(temp);
-     sec  = (temp - minute) * 60.0;
-   }  // end days2mdhms
+    /* Find hours minutes and seconds */
+    temp    = (days - dayofyr) * 24.0;
+    *hr     = (int)floor(temp);
+    temp    = (temp - *hr) * 60.0;
+    *minute = (int)floor(temp);
+    *sec    = (temp - *minute) * 60.0;
+}
 
 /* -----------------------------------------------------------------------------
 *
@@ -690,46 +750,38 @@ void    days2mdhms
 *    vallado       2007, 208, alg 22, ex 3-13
 * --------------------------------------------------------------------------- */
 
-void    invjday
-        (
-          double jd, int timezone, bool daylightsaving,
-          int& year, int& mon, int& day,
-          int& hr, int& minute, double& sec
-        )
-   {
-     int leapyrs;
-     double    days, tu, temp;
-
-	 jd += (double)timezone / 24.0;
-
-     /* --------------- find year and days of the year --------------- */
-     temp    = jd - 2415019.5;
-     tu      = temp / 365.25;
-     year    = 1900 + (int)floor(tu);
-     leapyrs = (int)floor((year - 1901) * 0.25);
-
-     // optional nudge by 8.64x10-7 sec to get even outputs
-     days    = temp - ((year - 1900) * 365.0 + leapyrs) + 0.00000000001;
-
-     /* ------------ check for case of beginning of a year ----------- */
-     if (days < 1.0)
-       {
-         year    = year - 1;
-         leapyrs = (int)floor((year - 1901) * 0.25);
-         days    = temp - ((year - 1900) * 365.0 + leapyrs);
-       }
-
-     /* ----------------- find remaing data  ------------------------- */
-     days2mdhms(year, days, mon, day, hr, minute, sec);
-	 if (daylightsaving && summertime(year, mon, day, hr, timezone)) {
-		 days2mdhms(year, days + 1.0/24.0, mon, day, hr, minute, sec);
-	 }
-     sec = sec - 0.00000086400;
-   }  // end invjday
-
-float floatmod(float a, float b)
+void invjday(double jd, int timezone, bool daylightsaving, int *year, int *mon, int *day, int *hr, int *minute, double *sec)
 {
-    return (a - b * floor(a / b));
+    int leapyrs;
+    double days, tu, temp;
+
+    jd += (double)timezone / 24.0;
+
+    /* Find year and days of the year */
+    temp    = jd - 2415019.5;
+    tu      = temp / 365.25;
+    *year   = 1900 + (int)floor(tu);
+    leapyrs = (int)floor((*year - 1901) * 0.25);
+
+    /* optional nudge by 8.64x10-7 sec to get even outputs */
+    days    = temp - ((*year - 1900) * 365.0 + leapyrs) + 0.00000000001;
+
+    /* Check for case of beginning of a year */
+    if (days < 1.0)
+    {
+        *year   = *year - 1;
+        leapyrs = (int)floor((*year - 1901) * 0.25);
+        days    = temp - ((*year - 1900) * 365.0 + leapyrs);
+    }
+
+    /* Find remaing data */
+    days2mdhms(year, days, mon, day, hr, minute, sec);
+    if (daylightsaving && summertime(year, mon, day, hr, timezone))
+    {
+        days2mdhms(year, days + 1.0/24.0, mon, day, hr, minute, sec);
+    }
+
+    *sec = *sec - 0.00000086400;
 }
 
 double floatmod(double a, double b)
@@ -748,3 +800,5 @@ bool summertime(int year, int month, int day, int hour, int tzHours)
 	else
 		return false;
 }
+
+/** \} End of sgp4ext group */
